@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="hello_text">Hello</string>s
+    <string name="hello_text">Hello</string>
+    <string name="change_localization">Change Language</string>s
 </resources>
