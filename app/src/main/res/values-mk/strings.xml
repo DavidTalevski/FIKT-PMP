@@ -3,4 +3,6 @@
     <string name="app_name">Моја Апликација</string>
     <string name="hello_text">Здраво</string>
     <string name="change_localization">Промена на јазик</string>
+    <string name="sign_in">Најавете се</string>
+    <string name="sign_out">Одјавете се</string>
 </resources>
