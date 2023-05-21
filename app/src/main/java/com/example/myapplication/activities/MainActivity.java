@@ -2,8 +2,11 @@ package com.example.myapplication.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
+import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -11,12 +14,16 @@ import android.os.Bundle;
 import android.os.LocaleList;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 
 import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.R;
 import com.example.myapplication.database.JournalEntry;
+import com.example.myapplication.fragments.AddJournalEntryFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +32,7 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FloatingActionButton fabAddJournalEntry;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setLocale(getCurrentLocalization());
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                         AppDatabase.class, "journal_database")
                 .build();
 
+        setAddJournalListener();
         // Create journal entries
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
@@ -63,6 +72,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setAddJournalListener() {
+        fabAddJournalEntry = findViewById(R.id.fabAddJournalEntry);
+        fabAddJournalEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAddJournalEntryFragment();
+            }
+        });
+    }
+
+    private void openAddJournalEntryFragment() {;
+        GridLayout mainFrame = findViewById(R.id.mainFrame);
+
+        mainFrame.setVisibility(View.GONE);
+        // Create an instance of the AddJournalEntryFragment
+        AddJournalEntryFragment fragment = new AddJournalEntryFragment(mainFrame);
+
+        // Get the FragmentManager and begin a fragment transaction
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Replace the content frame with the AddJournalEntryFragment
+        fragmentTransaction.replace(R.id.contentFrame, fragment);
+
+        // Add the transaction to the back stack
+        fragmentTransaction.addToBackStack(null);
+
+        // Commit the fragment transaction
+        fragmentTransaction.commit();
+
     }
 
     public void onChangeLocalizationButtonClicked(View v) {
