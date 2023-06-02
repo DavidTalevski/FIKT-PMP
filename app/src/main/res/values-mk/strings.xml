@@ -1,8 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Моја Апликација</string>
+    <string name="app_name">Мој Дневник</string>
     <string name="hello_text">Здраво</string>
-    <string name="change_localization">Промена на јазик</string>
-    <string name="sign_in">Најавете се</string>
-    <string name="sign_out">Одјавете се</string>
+    <string name="change_localization">Смени Јазик</string>
+    <string name="sign_in">Најава</string>
+    <string name="sign_out">Одјава</string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">1051059842965814</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1051059842965814</string>
+    <string name="dummy_button">Пример Копче</string>
+    <string name="dummy_content">ПРИМЕР\nСОДРЖИНА</string>
+    <string name="add_journal_entry">+</string>
+    <string name="addJournalEntryTitle">Наслов</string>
+    <string name="addJournalEntryText">Текст</string>
+    <string name="addJournalEntryDate">Датум</string>
+    <string name="addJournalEntrySelectDate">Изберете Датум</string>
+    <string name="addJournalEntryLocation">Локација</string>
+    <string name="addJournalEntryUploadImage">Превземи Слика</string>
+    <string name="addJournalEntryCaptureImage">Сними Слика</string>
+    <string name="saveEntry">Зачувај</string>
+    <string name="closeEntry">Затвори</string>
 </resources>

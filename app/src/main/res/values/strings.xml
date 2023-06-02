@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">My Journal</string>
     <string name="hello_text">Hello</string>
     <string name="change_localization">Change Language</string>
     <string name="sign_in">Sign in</string>
@@ -11,4 +11,13 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="add_journal_entry">+</string>
+    <string name="addJournalEntryTitle">Title</string>
+    <string name="addJournalEntryText">Text</string>
+    <string name="addJournalEntryDate">Date</string>
+    <string name="addJournalEntrySelectDate">Select Date</string>
+    <string name="addJournalEntryLocation">Location</string>
+    <string name="addJournalEntryUploadImage">Upload Image</string>
+    <string name="addJournalEntryCaptureImage">Capture Image</string>
+    <string name="saveEntry">Save</string>
+    <string name="closeEntry">Close</string>
 </resources>
