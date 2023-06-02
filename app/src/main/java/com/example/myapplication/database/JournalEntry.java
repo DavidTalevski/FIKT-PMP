@@ -15,12 +15,15 @@ public class JournalEntry {
     @ColumnInfo(name = "text")
     public String text;
 
-    @ColumnInfo(name = "image_path")
-    public String imagePath;
+    @ColumnInfo(name = "image_id")
+    public String imageId;
 
     @ColumnInfo(name = "date")
     public String date;
 
     @ColumnInfo(name = "location")
     public String location;
+
+    @ColumnInfo(name = "userId")
+    public String userId;
 }

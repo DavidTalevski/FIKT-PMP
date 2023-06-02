@@ -24,4 +24,7 @@ public interface JournalEntryDao {
 
     @Query("SELECT * FROM journalentry WHERE id = :entryId")
     JournalEntry getEntryById(int entryId);
+
+    @Query("DELETE FROM journalentry")
+    void deleteAllEntries();
 }
