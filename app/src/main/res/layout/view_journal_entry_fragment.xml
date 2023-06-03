@@ -9,6 +9,13 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/closeEntry"
+            android:layout_gravity="end" />
+
         <TextView
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"

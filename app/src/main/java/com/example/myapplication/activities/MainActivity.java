@@ -4,35 +4,45 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.room.Room;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.LocaleList;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.R;
 import com.example.myapplication.database.JournalEntry;
-import com.example.myapplication.fragments.AddJournalEntryFragment;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private AppDatabase appDatabase;
+
+    private ImageView profileImageView;
+    private TextView signInTextView;
+
+    private Button signInButton;
+    private Button signOutButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setLocale(getCurrentLocalization());
@@ -46,13 +56,8 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity");
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
 
-        Button btnRemoveAllEntries = findViewById(R.id.btnRemoveAllEntries);
-        btnRemoveAllEntries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeAllEntries();
-            }
-        });
+        profileImageView = findViewById(R.id.profileImageView);
+        signInTextView = findViewById(R.id.signInTextView);
 
         Button button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -62,16 +67,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
+        signInButton = findViewById(R.id.signInButton);
+        signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startSignIn(v);
             }
         });
 
-        Button button3= findViewById(R.id.button3);
-        button3.setOnClickListener(new View.OnClickListener() {
+        signOutButton= findViewById(R.id.signOutButton);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSignOutClicked(v);
@@ -79,85 +84,117 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // Initialize the database
-        appDatabase = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "journal_database")
-                .fallbackToDestructiveMigration()
-                .build();
+        appDatabase = AppDatabase.getInstance(this);
 
-        appDatabase.syncEntriesWithFirestore();
+//        appDatabase.syncEntriesWithFirestore();
 
-        setAddJournalListener();
-        setViewJournalListener();
+//        setViewJournalListener();
     }
 
-    private void setAddJournalListener() {
-        FloatingActionButton fabAddJournalEntry = findViewById(R.id.fabAddJournalEntry);
-        fabAddJournalEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openAddJournalEntryFragment();
-            }
-        });
-    }
+    // Function to add signed-in UI elements
+    private void addSignedInUI(String userName, Uri profilePictureUri) {
+        // Add profile picture
+        profileImageView.setVisibility(View.VISIBLE);
+        Glide.with(this).load(profilePictureUri).into(profileImageView);
 
-    private void removeAllEntries() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                appDatabase.journalEntryDao().deleteAllEntries();
-            }
-        }).start();
-    }
-
-    private void setViewJournalListener() {
-        Button fabViewJournal = findViewById(R.id.button4);
-        fabViewJournal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform the database operation on a background thread using coroutines
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<JournalEntry> allEntries = appDatabase.journalEntryDao().getAllEntries();
-                        JournalEntry entry = allEntries.get(0);
-                        // Switch back to the main thread to open the ViewJournalEntryFragment
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                openViewJournalEntryFragment(entry);
-                            }
-                        });
-                    }
-                }).start();
-            }
-        });
-    }
-
-    private void openAddJournalEntryFragment() {;
-        GridLayout mainFrame = findViewById(R.id.mainFrame);
-
-        mainFrame.setVisibility(View.GONE);
-        // Create an instance of the AddJournalEntryFragment
-        AddJournalEntryFragment fragment = new AddJournalEntryFragment(mainFrame);
-
-        // Get the FragmentManager and begin a fragment transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        // Replace the content frame with the AddJournalEntryFragment
-        fragmentTransaction.replace(R.id.contentFrame, fragment);
-
-        // Add the transaction to the back stack
-        fragmentTransaction.addToBackStack(null);
-
-        // Commit the fragment transaction
-        fragmentTransaction.commit();
+        // Add signed-in text
+        signInTextView.setText(getString(R.string.signed_in_as, userName));
 
     }
+
+    // Function to remove signed-in UI elements
+    private void removeSignedInUI() {
+        // Remove profile picture
+        profileImageView.setVisibility(View.GONE);
+
+        // Remove signed-in text
+        signInTextView.setText(R.string.you_are_not_signed_in);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkUserSignInStatus();
+    }
+
+    // Call this method after a successful sign-in
+    private void handleSignInSuccess() {
+        Toast.makeText(getApplicationContext(), R.string.succesfully_logged_in, Toast.LENGTH_SHORT).show();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userName = user.getDisplayName();
+            Uri profilePictureUri = user.getPhotoUrl();
+            addSignedInUI(userName, profilePictureUri);
+            updateButtonVisibility(true);
+            appDatabase.syncEntriesWithFirestore();
+        }
+    }
+
+
+    // Call this method after a sign-out
+    private void handleSignOut() {
+        Toast.makeText(getApplicationContext(), R.string.succesfully_logged_out, Toast.LENGTH_SHORT).show();
+        removeSignedInUI();
+        updateButtonVisibility(false);
+        // Perform any additional actions needed after sign-out
+    }
+
+    // Check if the user is signed in and update UI accordingly
+// Check if the user is signed in and update UI accordingly
+    private void checkUserSignInStatus() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            String userName = user.getDisplayName();
+            Uri profilePictureUri = user.getPhotoUrl();
+            addSignedInUI(userName, profilePictureUri);
+            updateButtonVisibility(true);
+        } else {
+            // User is signed out
+            removeSignedInUI();
+            updateButtonVisibility(false);
+        }
+    }
+
+    // Function to update the visibility of sign-in and sign-out buttons
+    private void updateButtonVisibility(boolean signedIn) {
+        if (signedIn) {
+            signInButton.setVisibility(View.GONE);
+            signOutButton.setVisibility(View.VISIBLE);
+        } else {
+            signInButton.setVisibility(View.VISIBLE);
+            signOutButton.setVisibility(View.GONE);
+        }
+    }
+
+
+//    private void setViewJournalListener() {
+//        Button fabViewJournal = findViewById(R.id.button4);
+//        fabViewJournal.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Perform the database operation on a background thread using coroutines
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        List<JournalEntry> allEntries = appDatabase.journalEntryDao().getAllEntries();
+//                        JournalEntry entry = allEntries.get(0);
+//                        // Switch back to the main thread to open the ViewJournalEntryFragment
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                openViewJournalEntryFragment(entry);
+//                            }
+//                        });
+//                    }
+//                }).start();
+//            }
+//        });
+//    }
 
     private void openViewJournalEntryFragment(JournalEntry entry) {
-        GridLayout mainFrame = findViewById(R.id.mainFrame);
+        LinearLayout mainFrame = findViewById(R.id.mainFrame);
 
         mainFrame.setVisibility(View.GONE);
         // Create an instance of the AddJournalEntryFragment
@@ -196,7 +233,12 @@ public class MainActivity extends AppCompatActivity {
             setLocale("en");
         }
 
-        recreate();
+
+        Toast.makeText(getApplicationContext(), R.string.language_changed_success, Toast.LENGTH_SHORT).show();
+
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     private void setLocale(String languageCode) {
@@ -208,11 +250,19 @@ public class MainActivity extends AppCompatActivity {
         res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
+    public void openViewJournalsActivity(View view) {
+        Intent intent = new Intent(this, JournalListActivity.class);
+        startActivity(intent);
+    }
+
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
             (result) -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     appDatabase.syncEntriesWithFirestore();
+                    handleSignInSuccess();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.error_sign_in, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -231,5 +281,6 @@ public class MainActivity extends AppCompatActivity {
     public void onSignOutClicked(View v) {
         AuthUI.getInstance()
                 .signOut(this);
+        handleSignOut();
     }
 }

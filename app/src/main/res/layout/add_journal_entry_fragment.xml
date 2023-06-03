@@ -11,7 +11,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="80dp">
 
 
         <!-- Entry Title -->
@@ -81,14 +81,14 @@
                 android:id="@+id/btnUploadImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:text="@string/addJournalEntryUploadImage"/>
 
             <Button
                 android:id="@+id/btnCaptureImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:text="@string/addJournalEntryCaptureImage" />
         </FrameLayout>
 
@@ -110,7 +110,6 @@
                 android:id="@+id/imgCloseImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_close"
                 android:layout_gravity="top|end"
                 android:visibility="gone" />
 
@@ -134,11 +133,8 @@
             android:id="@+id/btnClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_close"
             android:text="@string/closeEntry"
-            android:layout_gravity="right" />
+            android:layout_gravity="end" />
         </FrameLayout>
-
-        <!-- Close Button -->
     </LinearLayout>
 </ScrollView>

@@ -1,21 +1,17 @@
 package com.example.myapplication.fragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
@@ -23,15 +19,13 @@ import com.example.myapplication.database.JournalEntry;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-
 public class ViewJournalEntryFragment extends JournalEntryFragment {
 
     private static final String ARG_JOURNAL_ENTRY = "journal_entry";
 
     private JournalEntry journalEntry;
 
-    public ViewJournalEntryFragment(GridLayout mainFrame , JournalEntry entry) {
+    public ViewJournalEntryFragment(LinearLayout mainFrame , JournalEntry entry) {
         super(mainFrame);
         journalEntry = entry;
     }
@@ -82,7 +76,6 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
                 // Hide the progress bar after the image is loaded
                 progressBar.setVisibility(View.GONE);
             }).addOnFailureListener(e -> {
-                Log.d("test", "NO IMAGE VIEW");
                 imageView.setVisibility(View.GONE);
 
                 // Hide the progress bar if image loading fails

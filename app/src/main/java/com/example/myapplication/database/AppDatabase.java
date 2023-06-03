@@ -1,8 +1,10 @@
 package com.example.myapplication.database;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.myapplication.database.JournalEntry;
@@ -21,6 +23,20 @@ import java.util.Map;
 public abstract class AppDatabase extends RoomDatabase {
     public abstract JournalEntryDao journalEntryDao();
 
+    private static AppDatabase instance;
+
+    public static synchronized AppDatabase getInstance(Context context) {
+        if (instance == null) {
+            instance = Room.databaseBuilder(context.getApplicationContext(),
+                            AppDatabase.class, "journal_database")
+                    .fallbackToDestructiveMigration()
+                    .build();
+
+            // not sure if this is the best way of doing it
+            instance.syncEntriesWithFirestore();
+        }
+        return instance;
+    }
 
     public void syncEntriesWithFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

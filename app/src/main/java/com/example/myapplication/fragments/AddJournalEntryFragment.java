@@ -1,28 +1,19 @@
 package com.example.myapplication.fragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -32,16 +23,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import com.example.myapplication.R;
-import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.database.JournalEntry;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -67,9 +54,7 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
 
     private DatePickerDialog datePickerDialog;
 
-    private GridLayout mainFrame;
-
-    public AddJournalEntryFragment(GridLayout mainFrame) {
+    public AddJournalEntryFragment(LinearLayout mainFrame) {
         super(mainFrame);
     }
 
@@ -135,7 +120,6 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         imageView = view.findViewById(R.id.imageView);
 
         btnUploadImage = view.findViewById(R.id.btnUploadImage);
-        btnClose = view.findViewById(R.id.btnClose);
         btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
         closeImage = view.findViewById(R.id.imgCloseImage);
 
@@ -180,12 +164,6 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
             }
         });
 
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFragment();
-            }
-        });
     }
 
     private void saveJournalEntry() {

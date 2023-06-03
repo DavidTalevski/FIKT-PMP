@@ -2,8 +2,8 @@
     <string name="app_name">Мој Дневник</string>
     <string name="hello_text">Здраво</string>
     <string name="change_localization">Смени Јазик</string>
-    <string name="sign_in">Најава</string>
-    <string name="sign_out">Одјава</string>
+    <string name="sign_in">Најави се</string>
+    <string name="sign_out">Одјави се</string>
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">1051059842965814</string>
@@ -14,10 +14,20 @@
     <string name="addJournalEntryTitle">Наслов</string>
     <string name="addJournalEntryText">Текст</string>
     <string name="addJournalEntryDate">Датум</string>
-    <string name="addJournalEntrySelectDate">Изберете Датум</string>
+    <string name="addJournalEntrySelectDate">Избери Датум</string>
     <string name="addJournalEntryLocation">Локација</string>
-    <string name="addJournalEntryUploadImage">Превземи Слика</string>
-    <string name="addJournalEntryCaptureImage">Сними Слика</string>
+    <string name="addJournalEntryUploadImage">Постави Слика</string>
+    <string name="addJournalEntryCaptureImage">Сликaј</string>
     <string name="saveEntry">Зачувај</string>
     <string name="closeEntry">Затвори</string>
+    <string name="you_are_not_signed_in">Не сте најавени</string>
+    <string name="open_view_journals">Прегледај Записи</string>
+    <string name="open_journal_entry">Отвори</string>
+    <string name="delete_all_entries">Избриши Сите Записи</string>
+    <string name="signed_in_as">Најавени сте како %s</string>
+    <string name="error_sign_in">Грешка при најавување</string>
+    <string name="no_entries_found">Не се пронајдени записи</string>
+    <string name="succesfully_logged_in">Успешно се најавивте</string>
+    <string name="succesfully_logged_out">Успешно се одјавивте</string>
+    <string name="language_changed_success">Јазик променет</string>
 </resources>

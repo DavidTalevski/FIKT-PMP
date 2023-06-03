@@ -20,4 +20,14 @@
     <string name="addJournalEntryCaptureImage">Capture Image</string>
     <string name="saveEntry">Save</string>
     <string name="closeEntry">Close</string>
+    <string name="you_are_not_signed_in">You are not signed in</string>
+    <string name="open_view_journals">View Journals</string>
+    <string name="open_journal_entry">Open</string>
+    <string name="delete_all_entries">Delete All Entries</string>
+    <string name="signed_in_as">You are signed in as %s</string>
+    <string name="error_sign_in">Error while signing in</string>
+    <string name="no_entries_found">No entries found</string>
+    <string name="succesfully_logged_in">You have successfully logged in</string>
+    <string name="succesfully_logged_out">You have successfully logged out</string>
+    <string name="language_changed_success">Language changed</string>
 </resources>

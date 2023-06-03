@@ -19,7 +19,7 @@ public interface JournalEntryDao {
     @Delete
     void delete(JournalEntry entry);
 
-    @Query("SELECT * FROM journalentry ORDER BY date DESC")
+    @Query("SELECT * FROM journalentry ORDER BY date ASC")
     List<JournalEntry> getAllEntries();
 
     @Query("SELECT * FROM journalentry WHERE id = :entryId")
