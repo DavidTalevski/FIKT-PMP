@@ -91,13 +91,13 @@ public abstract class AppDatabase extends RoomDatabase {
                                 collectionReference.add(roomEntry)
                                         .addOnSuccessListener(documentReference -> {
                                             // Connect journal to the new document
-//                                            Executor updateExecutor = Executors.newSingleThreadExecutor();
-//                                            updateExecutor.execute(() -> {
+                                            Executor updateExecutor = Executors.newSingleThreadExecutor();
+                                            updateExecutor.execute(() -> {
                                                 String newDocumentId = documentReference.getId();
                                                 roomEntry.documentId = newDocumentId;
                                                 journalEntryDao().update(roomEntry);
                                                 Log.d("Firestore", "Entry added to Firestore: " + newDocumentId);
-//                                            });
+                                            });
                                         })
                                         .addOnFailureListener(e -> Log.d("Firestore", "Error adding entry to Firestore", e));
                             }
