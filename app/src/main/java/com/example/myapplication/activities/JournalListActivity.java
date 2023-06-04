@@ -3,6 +3,7 @@ package com.example.myapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -18,7 +19,6 @@ import com.example.myapplication.database.JournalEntry;
 import com.example.myapplication.adapters.JournalEntryAdapter;
 import com.example.myapplication.fragments.AddJournalEntryFragment;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -108,7 +108,7 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
     }
 
     private void setAddJournalListener() {
-        FloatingActionButton fabAddJournalEntry = findViewById(R.id.fabAddJournalEntry);
+        Button fabAddJournalEntry = findViewById(R.id.fabAddJournalEntry);
         fabAddJournalEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

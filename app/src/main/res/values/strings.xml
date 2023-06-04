@@ -10,7 +10,6 @@
     <string name="facebook_login_protocol_scheme" translatable="false">fb1051059842965814</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="add_journal_entry">+</string>
     <string name="addJournalEntryTitle">Title</string>
     <string name="addJournalEntryText">Text</string>
     <string name="addJournalEntryDate">Date</string>
@@ -31,4 +30,5 @@
     <string name="succesfully_logged_out">You have successfully logged out</string>
     <string name="language_changed_success">Language changed</string>
     <string name="user_not_logged_in">You must log in to create new entries</string>
+    <string name="add_new_entry">Add new entry</string>
 </resources>
