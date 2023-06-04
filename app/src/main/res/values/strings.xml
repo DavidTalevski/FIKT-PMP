@@ -38,4 +38,10 @@
 
     <string name="succesfully_created_entry">Successfully created entry</string>
     <string name="failed_creating_entry">Oops! Something went wrong</string>
+
+    <string name="confirm_deletion_title">Confirm Deletion</string>
+    <string name="confirm_deletion_message">Are you sure you want to delete all entries?</string>
+
+    <string name="delete_entries_success">Successfully deleted all entries</string>
+
 </resources>

@@ -38,4 +38,9 @@
 
     <string name="succesfully_created_entry">Успешно креиран запис</string>
     <string name="failed_creating_entry">Настана грешка</string>
+
+    <string name="confirm_deletion_title">Потврдете бришење</string>
+    <string name="confirm_deletion_message">Дали сте сигурни дека сакате да ги избришете сите записи?</string>
+
+    <string name="delete_entries_success" translatable="false">Успешно избришани сите записи</string>
 </resources>

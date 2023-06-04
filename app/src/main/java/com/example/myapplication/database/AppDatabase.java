@@ -184,5 +184,33 @@ public abstract class AppDatabase extends RoomDatabase {
                     });
         });
     }
+    public void deleteAllEntriesFromFirestore(String userId) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = firestore.collection("pmp-journal-entries");
+
+        collectionReference.whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                    for (DocumentSnapshot document : documents) {
+                        firestore.collection("pmp-journal-entries")
+                                .document(document.getId())
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    // Entry deleted successfully
+                                    // Perform any additional actions or update the UI
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Error deleting entry
+                                    Log.d("Firestore", "Error deleting entry: " + e.getMessage());
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Error retrieving documents
+                    Log.d("Firestore", "Error getting documents: " + e.getMessage());
+                });
+    }
+
 
 }

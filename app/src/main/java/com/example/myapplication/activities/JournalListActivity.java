@@ -1,6 +1,9 @@
 package com.example.myapplication.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -173,19 +176,42 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         fragmentTransaction.commit();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.notifyDataSetChanged();
-    }
-
     public void removeAllEntries(View view) {
-        new Thread(new Runnable() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.confirm_deletion_title));
+        builder.setMessage(getString(R.string.confirm_deletion_message));
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                AppDatabase.getInstance(getApplicationContext()).journalEntryDao().deleteAllEntries();
-                adapter.notifyDataSetChanged();
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    String userId = currentUser.getUid();
+
+                    // Perform deletion operations in the background
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Delete all entries from Room database
+                            AppDatabase.getInstance(getApplicationContext()).journalEntryDao().deleteAllEntries();
+
+                            // Delete all entries from Firestore
+                            AppDatabase.getInstance(getApplicationContext()).deleteAllEntriesFromFirestore(userId);
+
+                            // Update the UI or perform any necessary actions
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), getString(R.string.delete_entries_success), Toast.LENGTH_SHORT).show();
+                                    loadJournalEntries();
+                                }
+                            });
+                        }
+                    });
+                }
             }
-        }).start();
+        });
+        builder.setNegativeButton("No", null);
+        builder.show();
     }
 }
