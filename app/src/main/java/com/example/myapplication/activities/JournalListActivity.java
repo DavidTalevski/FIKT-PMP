@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,6 +19,8 @@ import com.example.myapplication.adapters.JournalEntryAdapter;
 import com.example.myapplication.fragments.AddJournalEntryFragment;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +117,15 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         });
     }
 
-    private void openAddJournalEntryFragment() {;
+    private void openAddJournalEntryFragment() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(getApplicationContext(), getString(R.string.user_not_logged_in), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         LinearLayout mainFrame = findViewById(R.id.mainFrame);
 
         mainFrame.setVisibility(View.GONE);

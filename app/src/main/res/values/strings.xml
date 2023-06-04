@@ -30,4 +30,5 @@
     <string name="succesfully_logged_in">You have successfully logged in</string>
     <string name="succesfully_logged_out">You have successfully logged out</string>
     <string name="language_changed_success">Language changed</string>
+    <string name="user_not_logged_in">You must log in to create new entries</string>
 </resources>

@@ -30,4 +30,5 @@
     <string name="succesfully_logged_in">Успешно се најавивте</string>
     <string name="succesfully_logged_out">Успешно се одјавивте</string>
     <string name="language_changed_success">Јазик променет</string>
+    <string name="user_not_logged_in">Мора да сте најавени за да креирате записи</string>
 </resources>
