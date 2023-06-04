@@ -31,4 +31,5 @@
     <string name="language_changed_success">Јазик променет</string>
     <string name="user_not_logged_in">Мора да сте најавени за да креирате записи</string>
     <string name="add_new_entry">Додадете нов запис</string>
+    <string name="delete">Избриши</string>
 </resources>

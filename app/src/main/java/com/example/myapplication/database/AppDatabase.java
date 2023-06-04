@@ -151,4 +151,27 @@ public abstract class AppDatabase extends RoomDatabase {
                 })
                 .addOnFailureListener(e -> Log.d("Firestore", "Error adding entry", e));
     }
+
+    public void deleteEntryFromRoomAndFirestore(JournalEntry entry) {
+        // Delete entry from Room using background thread
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            journalEntryDao().delete(entry);
+
+            // Delete entry from Firestore using background thread
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection("pmp-journal-entries")
+                    .document(entry.documentId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("Firestore", "Entry deleted from Firestore: " + entry.documentId);
+                        // Handle any UI updates or callbacks here
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.d("Firestore", "Error deleting entry from Firestore: " + entry.documentId, e);
+                        // Handle any error or failure cases here
+                    });
+        });
+    }
+
 }
