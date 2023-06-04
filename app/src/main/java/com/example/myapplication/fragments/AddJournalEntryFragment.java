@@ -177,25 +177,28 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
             return;
         }
 
-        String imagePath ="images/" + imageUri.getLastPathSegment();
 
         JournalEntry entry = new JournalEntry();
         entry.title = title;
         entry.text = text;
         entry.date = date;
         entry.location = location;
-        entry.imageId = imagePath;
 
-        StorageReference fileRef = storageRef.child(imagePath);
+        if(imageUri != null) {
+            String imagePath ="images/" + imageUri.getLastPathSegment();
 
-        UploadTask uploadTask = fileRef.putFile(imageUri);
+            entry.imageId = imagePath;
+            StorageReference fileRef = storageRef.child(imagePath);
 
-        // Monitor the upload progress
-        uploadTask.addOnSuccessListener(taskSnapshot -> {
-           Log.d("test", "success image upload");
-        }).addOnFailureListener(e -> {
-            Log.d("test", "error image upload:" + e.toString());
-        });
+            UploadTask uploadTask = fileRef.putFile(imageUri);
+
+            // Monitor the upload progress
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                Log.d("test", "success image upload");
+            }).addOnFailureListener(e -> {
+                Log.d("test", "error image upload:" + e.toString());
+            });
+        }
 
         new Thread(new Runnable() {
             @Override

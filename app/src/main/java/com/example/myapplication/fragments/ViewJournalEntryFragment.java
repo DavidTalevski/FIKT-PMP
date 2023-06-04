@@ -61,26 +61,30 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
             textViewLocation.setText(journalEntry.location);
 
             // Create a storage reference to the file you want to download
-            StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(journalEntry.imageId);
+            if (journalEntry.imageId != null) {
+                StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(journalEntry.imageId);
 
-            // Show the progress bar while the image is loading
-            progressBar.setVisibility(View.VISIBLE);
+                // Show the progress bar while the image is loading
+                progressBar.setVisibility(View.VISIBLE);
 
-            // Get the download URL of the file
-            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                // Load the image into the ImageView using Glide
-                Glide.with(requireContext())
-                        .load(uri)
-                        .into(imageView);
+                // Get the download URL of the file
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    // Load the image into the ImageView using Glide
+                    Glide.with(requireContext())
+                            .load(uri)
+                            .into(imageView);
 
-                // Hide the progress bar after the image is loaded
+                    // Hide the progress bar after the image is loaded
+                    progressBar.setVisibility(View.GONE);
+                }).addOnFailureListener(e -> {
+                    imageView.setVisibility(View.GONE);
+
+                    // Hide the progress bar if image loading fails
+                    progressBar.setVisibility(View.GONE);
+                });
+            } else {
                 progressBar.setVisibility(View.GONE);
-            }).addOnFailureListener(e -> {
-                imageView.setVisibility(View.GONE);
-
-                // Hide the progress bar if image loading fails
-                progressBar.setVisibility(View.GONE);
-            });
+            }
         }
     }
 }
