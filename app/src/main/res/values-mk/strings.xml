@@ -32,4 +32,10 @@
     <string name="user_not_logged_in">Мора да сте најавени за да креирате записи</string>
     <string name="add_new_entry">Додадете нов запис</string>
     <string name="delete">Избриши</string>
+
+    <string name="succesfully_deleted_entry">Успешно избришан запис</string>
+    <string name="failed_deleting_entry">Настана грешка</string>
+
+    <string name="succesfully_created_entry">Успешно креиран запис</string>
+    <string name="failed_creating_entry">Настана грешка</string>
 </resources>

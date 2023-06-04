@@ -2,6 +2,7 @@ package com.example.myapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.database.JournalEntry;
 import com.example.myapplication.adapters.JournalEntryAdapter;
 import com.example.myapplication.fragments.AddJournalEntryFragment;
+import com.example.myapplication.fragments.JournalEntryFragment;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,11 +27,33 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JournalListActivity extends AppCompatActivity implements  JournalEntryAdapter.OnButtonClickListener {
+public class JournalListActivity extends AppCompatActivity implements  JournalEntryAdapter.OnButtonClickListener, JournalEntryFragment.JournalUpdateListener {
 
     private RecyclerView recyclerView;
     private JournalEntryAdapter adapter;
     private List<JournalEntry> journalEntries;
+
+    public void onEntryDeleted() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), R.string.succesfully_deleted_entry, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        loadJournalEntries();
+    }
+
+    public void onEntryCreated() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), R.string.succesfully_created_entry, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        loadJournalEntries();
+    }
 
 
     @Override
@@ -93,6 +117,8 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         // Create an instance of the AddJournalEntryFragment
         ViewJournalEntryFragment fragment = new ViewJournalEntryFragment(mainFrame, entry);
 
+        fragment.setJournalUpdateListener(this);
+
         // Get the FragmentManager and begin a fragment transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -131,6 +157,7 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         mainFrame.setVisibility(View.GONE);
         // Create an instance of the AddJournalEntryFragment
         AddJournalEntryFragment fragment = new AddJournalEntryFragment(mainFrame);
+        fragment.setJournalUpdateListener(this);
 
         // Get the FragmentManager and begin a fragment transaction
         FragmentManager fragmentManager = getSupportFragmentManager();

@@ -8,18 +8,13 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.myapplication.database.JournalEntry;
-import com.example.myapplication.database.JournalEntryDao;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -121,7 +116,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return false;
     }
 
-    public void addEntryToRoomAndFirestore(JournalEntry entry) {
+    public void addEntryToRoomAndFirestore(JournalEntry entry, DatabaseActionCallback callback) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(currentUser == null) {
@@ -146,13 +141,23 @@ public abstract class AppDatabase extends RoomDatabase {
                         journalEntryDao().insert(entry);
                         Log.d("Firestore", "Entry added successfully");
 
+                        if (callback != null) {
+                            callback.onSuccess();
+                        }
+
                         // Any additional operations you want to perform on Room data
                     });
                 })
-                .addOnFailureListener(e -> Log.d("Firestore", "Error adding entry", e));
+                .addOnFailureListener(e -> {
+                    Log.d("Firestore", "Error adding entry", e);
+
+                    if (callback != null) {
+                        callback.onFailed(e);
+                    }
+                });
     }
 
-    public void deleteEntryFromRoomAndFirestore(JournalEntry entry) {
+    public void deleteEntryFromRoomAndFirestore(JournalEntry entry, DatabaseActionCallback callback) {
         // Delete entry from Room using background thread
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -165,11 +170,17 @@ public abstract class AppDatabase extends RoomDatabase {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Entry deleted from Firestore: " + entry.documentId);
-                        // Handle any UI updates or callbacks here
+
+                        if (callback != null) {
+                            callback.onSuccess();
+                        }
                     })
                     .addOnFailureListener(e -> {
                         Log.d("Firestore", "Error deleting entry from Firestore: " + entry.documentId, e);
-                        // Handle any error or failure cases here
+
+                        if (callback != null) {
+                            callback.onFailed(e);
+                        }
                     });
         });
     }

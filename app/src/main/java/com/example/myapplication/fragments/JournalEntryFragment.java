@@ -18,6 +18,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class JournalEntryFragment extends Fragment {
+
+    protected JournalUpdateListener mListener;
+
+    public interface JournalUpdateListener {
+        void onEntryDeleted();
+
+        void onEntryCreated();
+    }
+
+    public void setJournalUpdateListener(JournalUpdateListener listener) {
+        mListener = listener;
+    }
     protected AppDatabase journalDatabase;
     private LinearLayout mainFrame;
 
@@ -57,7 +69,8 @@ public class JournalEntryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         // Perform any cleanup or actions here before the fragment is closed
-        closeFragment();
+//        closeFragment();
+
     }
 
     protected void closeFragment() {

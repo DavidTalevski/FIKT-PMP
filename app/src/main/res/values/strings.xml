@@ -32,4 +32,10 @@
     <string name="user_not_logged_in">You must log in to create new entries</string>
     <string name="add_new_entry">Add new entry</string>
     <string name="delete">Delete</string>
+
+    <string name="succesfully_deleted_entry">Successfully deleted entry</string>
+    <string name="failed_deleting_entry">Oops! Something went wrong</string>
+
+    <string name="succesfully_created_entry">Successfully created entry</string>
+    <string name="failed_creating_entry">Oops! Something went wrong</string>
 </resources>

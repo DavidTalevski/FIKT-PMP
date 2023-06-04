@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.example.myapplication.R;
+import com.example.myapplication.database.DatabaseActionCallback;
 import com.example.myapplication.database.JournalEntry;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -203,7 +204,19 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                journalDatabase.addEntryToRoomAndFirestore(entry);
+                journalDatabase.addEntryToRoomAndFirestore(entry, new DatabaseActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (mListener != null) {
+                            mListener.onEntryCreated();
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+
+                    }
+                });
             }
         }).start();
 

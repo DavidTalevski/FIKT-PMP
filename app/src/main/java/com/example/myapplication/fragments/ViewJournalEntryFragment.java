@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.database.AppDatabase;
+import com.example.myapplication.database.DatabaseActionCallback;
 import com.example.myapplication.database.JournalEntry;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -50,7 +52,20 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
         Button btnDelete = view.findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(v -> {
             // Delete the entry when the button is clicked
-            AppDatabase.getInstance(getContext()).deleteEntryFromRoomAndFirestore(journalEntry);
+            AppDatabase.getInstance(getContext()).deleteEntryFromRoomAndFirestore(journalEntry, new DatabaseActionCallback() {
+                @Override
+                public void onSuccess() {
+                    if (mListener != null) {
+                        mListener.onEntryDeleted();
+                    }
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+
+                }
+            });
+
             closeFragment();
         });
     }
