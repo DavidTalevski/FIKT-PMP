@@ -25,6 +25,9 @@ public interface JournalEntryDao {
     @Query("SELECT * FROM journalentry WHERE id = :entryId")
     JournalEntry getEntryById(int entryId);
 
+    @Query("SELECT * FROM journalentry WHERE documentId = :documentId LIMIT 1")
+    JournalEntry getByDocumentId(String documentId);
+
     @Query("DELETE FROM journalentry")
     void deleteAllEntries();
 }

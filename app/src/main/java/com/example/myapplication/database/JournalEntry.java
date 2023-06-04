@@ -9,6 +9,9 @@ public class JournalEntry {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    @ColumnInfo(name = "documentId")
+    public String documentId;
+
     @ColumnInfo(name = "title")
     public String title;
 
