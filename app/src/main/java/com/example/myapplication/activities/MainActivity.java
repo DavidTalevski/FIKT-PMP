@@ -86,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
         appDatabase = AppDatabase.getInstance(this);
 
-//        appDatabase.syncEntriesWithFirestore();
-
-//        setViewJournalListener();
     }
 
     // Function to add signed-in UI elements
@@ -119,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Call this method after a successful sign-in
     private void handleSignInSuccess() {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("user_logged_in", null);
         Toast.makeText(getApplicationContext(), R.string.succesfully_logged_in, Toast.LENGTH_SHORT).show();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -134,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Call this method after a sign-out
     private void handleSignOut() {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("user_logged_out", null);
+
         Toast.makeText(getApplicationContext(), R.string.succesfully_logged_out, Toast.LENGTH_SHORT).show();
         removeSignedInUI();
         updateButtonVisibility(false);
@@ -168,52 +168,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-//    private void setViewJournalListener() {
-//        Button fabViewJournal = findViewById(R.id.button4);
-//        fabViewJournal.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Perform the database operation on a background thread using coroutines
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        List<JournalEntry> allEntries = appDatabase.journalEntryDao().getAllEntries();
-//                        JournalEntry entry = allEntries.get(0);
-//                        // Switch back to the main thread to open the ViewJournalEntryFragment
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                openViewJournalEntryFragment(entry);
-//                            }
-//                        });
-//                    }
-//                }).start();
-//            }
-//        });
-//    }
-
-    private void openViewJournalEntryFragment(JournalEntry entry) {
-        LinearLayout mainFrame = findViewById(R.id.mainFrame);
-
-        mainFrame.setVisibility(View.GONE);
-        // Create an instance of the AddJournalEntryFragment
-        ViewJournalEntryFragment fragment = new ViewJournalEntryFragment(mainFrame, entry);
-
-        // Get the FragmentManager and begin a fragment transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        // Replace the content frame with the AddJournalEntryFragment
-        fragmentTransaction.replace(R.id.contentFrame, fragment);
-
-        // Add the transaction to the back stack
-        fragmentTransaction.addToBackStack(null);
-
-        // Commit the fragment transaction
-        fragmentTransaction.commit();
-    }
-
     public String getCurrentLocalization() {
         Resources res = getResources();
         Configuration config = res.getConfiguration();
@@ -224,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void changeLocalization() {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("localization_changed", null);
         String currentLanguage = getCurrentLocalization();
         Log.d("app", currentLanguage);
 

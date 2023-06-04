@@ -24,6 +24,7 @@ import com.example.myapplication.adapters.JournalEntryAdapter;
 import com.example.myapplication.fragments.AddJournalEntryFragment;
 import com.example.myapplication.fragments.JournalEntryFragment;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -40,6 +41,7 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("deleted_entry", null);
                 Toast.makeText(getApplicationContext(), R.string.succesfully_deleted_entry, Toast.LENGTH_SHORT).show();
             }
         });
@@ -51,6 +53,7 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("created_entry", null);
                 Toast.makeText(getApplicationContext(), R.string.succesfully_created_entry, Toast.LENGTH_SHORT).show();
             }
         });
@@ -70,7 +73,6 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
         adapter.setOnButtonClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
 
         loadJournalEntries();
 

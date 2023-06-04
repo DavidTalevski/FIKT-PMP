@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -171,6 +173,9 @@ public abstract class AppDatabase extends RoomDatabase {
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Entry deleted from Firestore: " + entry.documentId);
 
+                        // Delete image from Firebase Storage
+                        deleteImageFromFirebaseStorage(entry.imageId);
+
                         if (callback != null) {
                             callback.onSuccess();
                         }
@@ -184,32 +189,53 @@ public abstract class AppDatabase extends RoomDatabase {
                     });
         });
     }
+
+    private void deleteImageFromFirebaseStorage(String imageId) {
+
+        Log.d("Test", imageId);
+            // Get a reference to the Firebase Storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+
+        // Create a reference to the image file in Firebase Storage
+        StorageReference imageRef = storageReference.child(imageId);
+
+        // Delete the image file
+        imageRef.delete()
+            .addOnSuccessListener(aVoid -> {
+                Log.d("FirebaseStorage", "Image deleted from Firebase Storage: " + imageId);
+            })
+            .addOnFailureListener(e -> {
+                Log.d("FirebaseStorage", "Error deleting image from Firebase Storage: " + imageId, e);
+            });
+    }
+
     public void deleteAllEntriesFromFirestore(String userId) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference collectionReference = firestore.collection("pmp-journal-entries");
 
         collectionReference.whereEqualTo("userId", userId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot document : documents) {
-                        firestore.collection("pmp-journal-entries")
-                                .document(document.getId())
-                                .delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    // Entry deleted successfully
-                                    // Perform any additional actions or update the UI
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Error deleting entry
-                                    Log.d("Firestore", "Error deleting entry: " + e.getMessage());
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Error retrieving documents
-                    Log.d("Firestore", "Error getting documents: " + e.getMessage());
-                });
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot document : documents) {
+                    firestore.collection("pmp-journal-entries")
+                            .document(document.getId())
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                // Entry deleted successfully
+                                // Perform any additional actions or update the UI
+                            })
+                            .addOnFailureListener(e -> {
+                                // Error deleting entry
+                                Log.d("Firestore", "Error deleting entry: " + e.getMessage());
+                            });
+                }
+            })
+            .addOnFailureListener(e -> {
+                // Error retrieving documents
+                Log.d("Firestore", "Error getting documents: " + e.getMessage());
+            });
     }
 
 

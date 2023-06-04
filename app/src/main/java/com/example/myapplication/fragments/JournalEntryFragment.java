@@ -69,7 +69,7 @@ public class JournalEntryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         // Perform any cleanup or actions here before the fragment is closed
-//        closeFragment();
+        closeFragment();
 
     }
 
