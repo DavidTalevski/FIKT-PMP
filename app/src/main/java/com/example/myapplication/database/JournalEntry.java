@@ -24,8 +24,11 @@ public class JournalEntry {
     @ColumnInfo(name = "date")
     public String date;
 
-    @ColumnInfo(name = "location")
-    public String location;
+    @ColumnInfo(name = "latitude")
+    public double latitude;
+
+    @ColumnInfo(name = "longitude")
+    public double longitude;
 
     @ColumnInfo(name = "userId")
     public String userId;

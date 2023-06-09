@@ -1,14 +1,21 @@
 package com.example.myapplication.fragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -21,14 +28,27 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.android.installreferrer.BuildConfig;
 import com.example.myapplication.R;
+import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.database.DatabaseActionCallback;
 import com.example.myapplication.database.JournalEntry;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
+import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Marker;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,23 +60,138 @@ import java.util.Locale;
 public class AddJournalEntryFragment extends JournalEntryFragment {
 
     private EditText editTextTitle;
+
+    private Marker selectedMarker;
+
     private EditText editTextText;
     private EditText editTextDate;
-    private EditText editTextLocation;
-    private Button btnDatePicker;
-    private Button btnUploadImage;
-    private Button btnClose;
-    private Button btnCaptureImage;
 
     private Uri imageUri;
     private ImageView closeImage;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private ImageView imageView; // Reference to the ImageView where the selected image will be displayed
 
-    private DatePickerDialog datePickerDialog;
-
     public AddJournalEntryFragment(LinearLayout mainFrame) {
         super(mainFrame);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        journalDatabase = AppDatabase.getInstance(getContext());
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
+        View rootView = inflater.inflate(R.layout.add_journal_entry_fragment, container, false);
+
+        // Initialize OSMDroid configuration
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+        // Find the MapView in the layout
+        mapView = rootView.findViewById(R.id.mapView);
+
+        // Set the tile source (e.g., MAPNIK, MAPQUEST, etc.)
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+
+        // Enable zoom controls
+        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        mapView.setMultiTouchControls(true);
+
+        selectedMarker = new Marker(mapView);
+
+        mapView.getOverlays().add(new MapEventsOverlay(new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+//                showMarkerOnMap(p);
+                return false;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
+                showMarkerOnMap(p);
+                return false;
+            }
+        }));
+
+
+
+        requestLocationPermission();
+
+        mapView.getController().setZoom(18);
+
+        return rootView;
+    }
+
+    private void showMarkerOnMap(GeoPoint location) {
+        selectedMarker.setPosition(location);
+        mapView.getOverlays().add(selectedMarker);
+        mapView.invalidate();
+    }
+
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            setupMap();
+        } else {
+            // Request location permission using registerForActivityResult
+            ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (isGranted) {
+                            setupMap();
+                        } else {
+                            showDefaultLocationOnMap();
+                        }
+                    }
+            );
+
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+        }
+    }
+
+    private void showDefaultLocationOnMap() {
+        GeoPoint defaultLocation = new GeoPoint(41.0317, 21.3347);
+        mapView.getController().setCenter(defaultLocation);
+        mapView.invalidate();
+    }
+    private void setupMap() {
+        // Enable zoom controls
+        mapView.getZoomController().setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        mapView.setMultiTouchControls(true);
+
+        // Get the last known location
+        Location lastKnownLocation = getLastKnownLocation();
+
+        // Show the current location on the map
+        if (lastKnownLocation != null) {
+            showLocationOnMap(lastKnownLocation);
+        }
+    }
+
+    private Location getLastKnownLocation() {
+        Location location = null;
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+            if (locationManager != null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null) {
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+            }
+        }
+        return location;
+    }
+
+    private void showLocationOnMap(@NonNull Location location) {
+        GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+        mapView.getController().setCenter(geoPoint);
+
+//        Marker marker = new Marker(mapView);
+        selectedMarker.setPosition(geoPoint);
+        mapView.getOverlays().add(selectedMarker);
+
+        mapView.invalidate();
     }
 
     private File createImageFile() throws IOException {
@@ -65,12 +200,7 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         String imageFileName = "JPEG_" + timestamp + "_";
         File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        Log.d("filename", imageFileName);
-
-        // Create the image file
-        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
-
-        return imageFile;
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(
@@ -116,12 +246,11 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         editTextTitle = view.findViewById(R.id.editTextTitle);
         editTextText = view.findViewById(R.id.editTextText);
         editTextDate = view.findViewById(R.id.editTextDate);
-        editTextLocation = view.findViewById(R.id.editTextLocation);
-        btnDatePicker = view.findViewById(R.id.btnDatePicker);
+        Button btnDatePicker = view.findViewById(R.id.btnDatePicker);
         imageView = view.findViewById(R.id.imageView);
 
-        btnUploadImage = view.findViewById(R.id.btnUploadImage);
-        btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
+        Button btnUploadImage = view.findViewById(R.id.btnUploadImage);
+        Button btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
         closeImage = view.findViewById(R.id.imgCloseImage);
 
         Button btnSaveEntry = view.findViewById(R.id.btnSaveEntry);
@@ -154,7 +283,7 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         btnDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePicker();
+                showDateTimePicker();
             }
         });
 
@@ -171,23 +300,24 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         String title = editTextTitle.getText().toString().trim();
         String text = editTextText.getText().toString().trim();
         String date = editTextDate.getText().toString().trim();
-        String location = editTextLocation.getText().toString().trim();
 
-        if (title.isEmpty() || text.isEmpty() || date.isEmpty() || location.isEmpty()) {
+        if (title.isEmpty() || text.isEmpty() || date.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
 
+        GeoPoint location = selectedMarker.getPosition();
+
         JournalEntry entry = new JournalEntry();
         entry.title = title;
         entry.text = text;
         entry.date = date;
-        entry.location = location;
+        entry.latitude = location.getLatitude();
+        entry.longitude = location.getLongitude();
 
-        if(imageUri != null) {
-            String imagePath ="images/" + imageUri.getLastPathSegment();
-
+        if (imageUri != null) {
+            String imagePath = "images/" + imageUri.getLastPathSegment();
             entry.imageId = imagePath;
             StorageReference fileRef = storageRef.child(imagePath);
 
@@ -201,27 +331,25 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
             });
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                journalDatabase.addEntryToRoomAndFirestore(entry, new DatabaseActionCallback() {
-                    @Override
-                    public void onSuccess() {
-                        if (mListener != null) {
-                            mListener.onEntryCreated();
-                        }
+        new Thread(() -> {
+            journalDatabase.addEntryToRoomAndFirestore(entry, new DatabaseActionCallback() {
+                @Override
+                public void onSuccess() {
+                    if (mListener != null) {
+                        mListener.onEntryCreated();
                     }
+                }
 
-                    @Override
-                    public void onFailed(Exception e) {
-
-                    }
-                });
-            }
+                @Override
+                public void onFailed(Exception e) {
+                    // Handle failure
+                }
+            });
         }).start();
 
         closeFragment();
     }
+
     private boolean hasCameraPermission() {
         return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
@@ -253,26 +381,37 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
         // Launch the camera intent
         cameraLauncher.launch(imageUri);
     }
-    private void showDatePicker() {
-        // Get current date
+    private void showDateTimePicker() {
+        // Get current date and time
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
 
         // Create DatePickerDialog and set it as the date picker for the editTextDate
-        datePickerDialog = new DatePickerDialog(requireContext(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                // Update the editTextDate with the selected date
-                String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
-                editTextDate.setText(selectedDate);
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+            // Update the editTextDate with the selected date
+            String selectedDate = selectedDayOfMonth + "/" + (selectedMonth + 1) + "/" + selectedYear;
+            editTextDate.setText(selectedDate);
+
+            // Create TimePickerDialog and set it as the time picker for the editTextDate
+            TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(), (timePickerView, hourOfDay, minuteOfHour) -> {
+                // Update the editTextDate with the selected time
+                String selectedTime = hourOfDay + ":" + minuteOfHour;
+                editTextDate.append(" " + selectedTime);
+            }, hour, minute, false);
+
+            // Show the time picker dialog
+            timePickerDialog.show();
+
         }, year, month, day);
 
         // Show the date picker dialog
         datePickerDialog.show();
     }
+
 
     private void uploadImage() {
         imagePickerLauncher.launch("image/*");

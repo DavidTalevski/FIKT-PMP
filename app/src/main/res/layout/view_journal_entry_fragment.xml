@@ -54,12 +54,11 @@
             android:textAppearance="?android:textAppearanceSmall"
             android:padding="16dp" />
 
-        <TextView
-            android:id="@+id/textViewLocation"
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:padding="16dp" />
+            android:layout_height="200dp"  />
 
         <ProgressBar
             android:id="@+id/progressBar"

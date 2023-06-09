@@ -51,7 +51,8 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (journalEntries != null && !journalEntries.isEmpty()) {
             JournalEntry journalEntry = journalEntries.get(position);
-            holder.titleTextView.setText(journalEntry.title);
+
+            holder.titleTextView.setText(getTitleText(journalEntry.title));
             holder.dateTextView.setText(journalEntry.date);
             holder.openButton.setOnClickListener(v -> openJournalEntry(journalEntry));
         } else {
@@ -60,6 +61,10 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
             holder.dateTextView.setText("");
             holder.openButton.setOnClickListener(null);
         }
+    }
+
+    private String getTitleText(String title) {
+        return title.length() > 35 ? title.substring(0, 35) + "..." : title;
     }
 
     @Override

@@ -1,23 +1,21 @@
 package com.example.myapplication.fragments;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.AppDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class JournalEntryFragment extends Fragment {
+import org.osmdroid.views.MapView;
+
+public abstract class JournalEntryFragment extends Fragment {
 
     protected JournalUpdateListener mListener;
 
@@ -33,6 +31,8 @@ public class JournalEntryFragment extends Fragment {
     protected AppDatabase journalDatabase;
     private LinearLayout mainFrame;
 
+    protected MapView mapView;
+
     protected FirebaseStorage storage;
     protected StorageReference storageRef;
 
@@ -41,19 +41,22 @@ public class JournalEntryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        journalDatabase = AppDatabase.getInstance(getContext());
-
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
-
-        return inflater.inflate(R.layout.add_journal_entry_fragment, container, false);
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+//    public abstract View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         Button btnClose = getView().findViewById(R.id.btnClose);
 
