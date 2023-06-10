@@ -84,7 +84,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
     }
 
     private String getTitleText(String title) {
-        return title.length() > 35 ? title.substring(0, 35) + "..." : title;
+        return title.length() > 30 ? title.substring(0, 30) + "..." : title;
     }
 
     @Override

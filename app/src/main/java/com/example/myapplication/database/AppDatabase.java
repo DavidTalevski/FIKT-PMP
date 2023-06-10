@@ -39,6 +39,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
     public void syncEntriesWithFirestore() {
+        Log.d("Firestore", "SYNC ENTRIES WITH FIRESTORE");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null) {
@@ -76,7 +77,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         }
 
                         // Check if Room entries exist in Firestore
-                        List<JournalEntry> roomEntries = journalEntryDao().getAllEntries();
+                        List<JournalEntry> roomEntries = journalEntryDao().getAllEntries(userId);
 
                         for (JournalEntry roomEntry : roomEntries) {
                             if (!entryExistsInFirestore(roomEntry.documentId, documents)) {
@@ -191,8 +192,6 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private void deleteImageFromFirebaseStorage(String imageId) {
-
-        Log.d("Test", imageId);
             // Get a reference to the Firebase Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();

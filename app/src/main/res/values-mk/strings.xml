@@ -54,4 +54,5 @@
     <string name="yes">Да</string>
     <string name="no">Не</string>
     <string name="back">Назад</string>
+    <string name="user_not_authenticated_message">Мора да сте најавени за да ги видите записите.</string>
 </resources>

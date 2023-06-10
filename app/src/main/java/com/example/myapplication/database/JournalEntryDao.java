@@ -19,8 +19,9 @@ public interface JournalEntryDao {
     @Delete
     void delete(JournalEntry entry);
 
-    @Query("SELECT * FROM journalentry ORDER BY date ASC")
-    List<JournalEntry> getAllEntries();
+    @Query("SELECT * FROM journalentry WHERE userId = :userId ORDER BY date ASC")
+    List<JournalEntry> getAllEntries(String userId);
+
 
     @Query("SELECT * FROM journalentry WHERE id = :entryId")
     JournalEntry getEntryById(int entryId);
@@ -28,6 +29,6 @@ public interface JournalEntryDao {
     @Query("SELECT * FROM journalentry WHERE documentId = :documentId LIMIT 1")
     JournalEntry getByDocumentId(String documentId);
 
-    @Query("DELETE FROM journalentry")
-    void deleteAllEntries();
+    @Query("DELETE FROM journalentry WHERE userId = :userId")
+    void deleteAllEntries(String userId);
 }

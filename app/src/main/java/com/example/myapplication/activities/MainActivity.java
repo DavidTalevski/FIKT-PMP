@@ -215,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             new FirebaseAuthUIActivityResultContract(),
             (result) -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    appDatabase.syncEntriesWithFirestore();
                     handleSignInSuccess();
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.error_sign_in, Toast.LENGTH_SHORT).show();

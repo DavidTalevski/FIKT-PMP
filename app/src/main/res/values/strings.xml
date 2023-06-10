@@ -52,5 +52,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="back">Back</string>
+    <string name="user_not_authenticated_message">You must be logged in to view entries.</string>
 
 </resources>

@@ -86,20 +86,30 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
     }
 
     private void loadJournalEntries() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<JournalEntry> entries = AppDatabase.getInstance(getApplicationContext()).journalEntryDao().getAllEntries();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        journalEntries = entries;
-                        adapter.setJournalEntries(journalEntries);
-                    }
-                });
-            }
-        }).start();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<JournalEntry> entries = AppDatabase.getInstance(getApplicationContext()).journalEntryDao().getAllEntries(userId);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            journalEntries = entries;
+                            adapter.setJournalEntries(journalEntries);
+                        }
+                    });
+                }
+            }).start();
+        } else {
+            // User is not authenticated
+            String toastMessage = getString(R.string.user_not_authenticated_message);
+            Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     public void onButtonClicked(JournalEntry entry) {
         new Thread(new Runnable() {
@@ -179,41 +189,44 @@ public class JournalListActivity extends AppCompatActivity implements  JournalEn
     }
 
     public void removeAllEntries(View view) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, getString(R.string.user_not_authenticated_message), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(getString(R.string.confirm_deletion_title));
         builder.setMessage(getString(R.string.confirm_deletion_message));
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser != null) {
-                    String userId = currentUser.getUid();
+                String userId = currentUser.getUid();
 
-                    // Perform deletion operations in the background
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Delete all entries from Room database
-                            AppDatabase.getInstance(getApplicationContext()).journalEntryDao().deleteAllEntries();
+                // Perform deletion operations in the background
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Delete all entries from Room database
+                        AppDatabase.getInstance(getApplicationContext()).journalEntryDao().deleteAllEntries(userId);
 
-                            // Delete all entries from Firestore
-                            AppDatabase.getInstance(getApplicationContext()).deleteAllEntriesFromFirestore(userId);
+                        // Delete all entries from Firestore
+                        AppDatabase.getInstance(getApplicationContext()).deleteAllEntriesFromFirestore(userId);
 
-                            // Update the UI or perform any necessary actions
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.delete_entries_success), Toast.LENGTH_SHORT).show();
-                                    loadJournalEntries();
-                                }
-                            });
-                        }
-                    });
-                }
+                        // Update the UI or perform any necessary actions
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), getString(R.string.delete_entries_success), Toast.LENGTH_SHORT).show();
+                                loadJournalEntries();
+                            }
+                        });
+                    }
+                });
             }
         });
-        builder.setNegativeButton("No", null);
+        builder.setNegativeButton(getString(R.string.no), null);
         builder.show();
     }
 }
