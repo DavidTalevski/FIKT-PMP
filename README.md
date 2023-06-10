@@ -57,5 +57,5 @@ My Journal allows users to create journal entries, add existing images from gall
 | --- |
 
 ## Videos
-| https://github.com/DavidTalevski/FIKT-PMP/assets/58443846/b1c57a48-36ce-43fc-bbde-0e786b8d99e1 | https://github.com/DavidTalevski/FIKT-PMP/assets/58443846/93e239fd-22c0-4976-b639-ef3544f8f91a |
+| <video src="https://github.com/DavidTalevski/FIKT-PMP/assets/58443846/b1c57a48-36ce-43fc-bbde-0e786b8d99e1">  | <video src="https://github.com/DavidTalevski/FIKT-PMP/assets/58443846/93e239fd-22c0-4976-b639-ef3544f8f91a">|
 | --- | --- |
