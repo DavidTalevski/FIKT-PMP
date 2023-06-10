@@ -43,5 +43,9 @@
     <string name="confirm_deletion_message">Are you sure you want to delete all entries?</string>
 
     <string name="delete_entries_success">Successfully deleted all entries</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_email">Sign in with Email</string>
+    <string name="continue_as_guest">Continue as Guest</string>
 
 </resources>

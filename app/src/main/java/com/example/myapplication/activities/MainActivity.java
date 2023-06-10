@@ -25,6 +25,7 @@ import com.example.myapplication.database.AppDatabase;
 import com.example.myapplication.R;
 import com.example.myapplication.database.JournalEntry;
 import com.example.myapplication.fragments.ViewJournalEntryFragment;
+import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -222,6 +223,13 @@ public class MainActivity extends AppCompatActivity {
             });
 
     public void startSignIn(View v) {
+        AuthMethodPickerLayout customLayout = new AuthMethodPickerLayout.Builder(R.layout.layout_auth_method_picker)
+                .setEmailButtonId(R.id.button_email)
+                .setGoogleButtonId(R.id.button_google)
+                .setFacebookButtonId(R.id.button_facebook)
+                .setAnonymousButtonId(R.id.button_guest)
+                .build();
+
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(Arrays.asList(
@@ -229,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
                     new AuthUI.IdpConfig.FacebookBuilder().build(),
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.AnonymousBuilder().build()))
+                .setAuthMethodPickerLayout(customLayout)
+                .setTheme(R.style.Base_Theme_MyApplication)
                 .build();
 
         signInLauncher.launch(signInIntent);

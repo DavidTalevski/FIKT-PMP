@@ -43,4 +43,11 @@
     <string name="confirm_deletion_message">Дали сте сигурни дека сакате да ги избришете сите записи?</string>
 
     <string name="delete_entries_success" translatable="false">Успешно избришани сите записи</string>
+
+    <!-- Macedonian translations -->
+    <string name="sign_in_with_facebook">Најави се со Facebook</string>
+    <string name="sign_in_with_google">Најави се со Google</string>
+    <string name="sign_in_with_email">Најави се со е-пошта</string>
+    <string name="continue_as_guest">Продолжи како гостин</string>
+
 </resources>

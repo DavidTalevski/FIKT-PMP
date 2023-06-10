@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <!-- Facebook Sign-In Button -->
+        <Button
+            android:id="@+id/button_facebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/sign_in_with_facebook" />
+
+        <!-- Google Sign-In Button -->
+        <Button
+            android:id="@+id/button_google"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/sign_in_with_google" />
+
+        <!-- Email Sign-In Button -->
+        <Button
+            android:id="@+id/button_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/sign_in_with_email" />
+
+        <!-- Guest Sign-In Button -->
+        <Button
+            android:id="@+id/button_guest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/continue_as_guest" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:background="@drawable/wave"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false" />
+</RelativeLayout>
+
