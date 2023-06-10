@@ -23,11 +23,11 @@
 
         <Button
             android:id="@+id/closeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="88dp"
+            android:layout_height="match_parent"
             android:layout_gravity="left"
             android:onClick="closeActivity"
-            android:text="@string/closeEntry" />
+            android:text="@string/back" />
 
         <Button
             android:id="@+id/deleteAllEntries"
@@ -40,6 +40,12 @@
     </FrameLayout>
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -47,13 +53,18 @@
         android:layout_weight="1"
         android:padding="8dp" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:orientation="horizontal">
-
 
 
         <Button

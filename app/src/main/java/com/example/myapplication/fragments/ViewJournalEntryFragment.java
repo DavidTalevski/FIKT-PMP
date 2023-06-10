@@ -1,5 +1,6 @@
 package com.example.myapplication.fragments;
 
+import android.app.AlertDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -83,23 +84,33 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
 
         Button btnDelete = view.findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(v -> {
-            // Delete the entry when the button is clicked
-            AppDatabase.getInstance(getContext()).deleteEntryFromRoomAndFirestore(journalEntry, new DatabaseActionCallback() {
-                @Override
-                public void onSuccess() {
-                    if (mListener != null) {
-                        mListener.onEntryDeleted();
-                    }
-                }
+            // Show confirmation dialog
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.confirmation_title))
+                    .setMessage(getString(R.string.confirmation_message))
+                    .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                        // User confirmed, proceed with deletion
+                        AppDatabase.getInstance(getContext()).deleteEntryFromRoomAndFirestore(journalEntry, new DatabaseActionCallback() {
+                            @Override
+                            public void onSuccess() {
+                                if (mListener != null) {
+                                    mListener.onEntryDeleted();
+                                }
+                            }
 
-                @Override
-                public void onFailed(Exception e) {
+                            @Override
+                            public void onFailed(Exception e) {
+                                // Handle failure
+                            }
+                        });
 
-                }
-            });
-
-            closeFragment();
+                        closeFragment();
+                    })
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show();
         });
+
+
     }
 
     private void createEntry(View view) {

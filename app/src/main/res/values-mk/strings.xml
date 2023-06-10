@@ -49,5 +49,9 @@
     <string name="sign_in_with_google">Најави се со Google</string>
     <string name="sign_in_with_email">Најави се со е-пошта</string>
     <string name="continue_as_guest">Продолжи како гостин</string>
-
+    <string name="confirmation_title">Потврда</string>
+    <string name="confirmation_message">Дали сте сигурни дека сакате да го избришете овој запис?</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="back">Назад</string>
 </resources>

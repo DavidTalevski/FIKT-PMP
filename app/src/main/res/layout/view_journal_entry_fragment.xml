@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:layout_margin="16dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -31,6 +32,12 @@
                 android:layout_gravity="end" />
 
         </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray" />
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -72,8 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="16dp" />
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 </ScrollView>
