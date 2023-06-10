@@ -21,14 +21,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/closeEntry"
-                android:layout_gravity="end" />
+                android:layout_gravity="start" />
 
             <Button
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/delete"
-                android:layout_gravity="start" />
+                android:layout_gravity="end" />
 
         </FrameLayout>
 
