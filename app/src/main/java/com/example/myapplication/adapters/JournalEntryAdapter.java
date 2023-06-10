@@ -14,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.database.JournalEntry;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
@@ -36,6 +41,21 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
     }
 
     public void setJournalEntries(List<JournalEntry> journalEntries) {
+        Collections.sort(journalEntries, new Comparator<JournalEntry>() {
+            @Override
+            public int compare(JournalEntry entry1, JournalEntry entry2) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy HH:mm");
+                try {
+                    Date date1 = dateFormat.parse(entry1.date);
+                    Date date2 = dateFormat.parse(entry2.date);
+                    return date2.compareTo(date1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
+
         this.journalEntries = journalEntries;
         notifyDataSetChanged();
     }
