@@ -113,16 +113,15 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
             }
         }));
 
-
+        mapView.getController().setZoom(18);
 
         requestLocationPermission();
-
-        mapView.getController().setZoom(18);
 
         return rootView;
     }
 
     private void showMarkerOnMap(GeoPoint location) {
+        Log.d("Test", "showMarkerOnMap");
         selectedMarker.setPosition(location);
         mapView.getOverlays().add(selectedMarker);
         mapView.invalidate();
@@ -130,12 +129,17 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
 
     private void requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            Log.d("Test", "1");
             setupMap();
         } else {
+            Log.d("Test", "2");
+
             // Request location permission using registerForActivityResult
             ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
+                        Log.d("Test", "isGranted" + isGranted);
                         if (isGranted) {
                             setupMap();
                         } else {
@@ -146,12 +150,16 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
 
             if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            } else {
+                showDefaultLocationOnMap();
             }
         }
     }
 
     private void showDefaultLocationOnMap() {
+        Log.d("Test", "showDefaultLocationOnMap");
         GeoPoint defaultLocation = new GeoPoint(41.0317, 21.3347);
+        showMarkerOnMap(defaultLocation);
         mapView.getController().setCenter(defaultLocation);
         mapView.invalidate();
     }
@@ -190,6 +198,8 @@ public class AddJournalEntryFragment extends JournalEntryFragment {
 //        Marker marker = new Marker(mapView);
         selectedMarker.setPosition(geoPoint);
         mapView.getOverlays().add(selectedMarker);
+
+        Log.d("Test", "showLocationOnMap");
 
         mapView.invalidate();
     }
