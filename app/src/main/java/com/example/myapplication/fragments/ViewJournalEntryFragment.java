@@ -1,6 +1,7 @@
 package com.example.myapplication.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.overlay.Marker;
+
+import java.lang.ref.WeakReference;
 
 
 public class ViewJournalEntryFragment extends JournalEntryFragment {
@@ -112,7 +115,6 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
 
 
     }
-
     private void createEntry(View view) {
         TextView textViewTitle = view.findViewById(R.id.textViewTitle);
         TextView textViewText = view.findViewById(R.id.textViewText);
@@ -120,6 +122,9 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
         ImageView imageView = view.findViewById(R.id.imageView);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
         mapView = view.findViewById(R.id.mapView);
+
+        // Use WeakReference to hold a reference to the fragment's context
+        WeakReference<Context> contextRef = new WeakReference<>(requireContext());
 
         if (journalEntry != null) {
             textViewTitle.setText(journalEntry.title);
@@ -147,26 +152,33 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
 
                 // Get the download URL of the file
                 fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // Load the image into the ImageView using Glide
-                    Glide.with(requireContext())
-                            .load(uri)
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    // Hide the progress bar if image loading fails
-                                    progressBar.setVisibility(View.GONE);
-                                    return false;
-                                }
+                    // Get the fragment's context from the WeakReference
+                    Context context = contextRef.get();
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    // Image loading is successful, hide the progress bar
-                                    progressBar.setVisibility(View.GONE);
-                                    return false;
-                                }
-                            })
-                            .into(imageView);
+                    // Check if the context is still valid
+                    if (context != null) {
+                        // Load the image into the ImageView using Glide
+                        Glide.with(context)
+                                .load(uri)
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        // Hide the progress bar if image loading fails
+                                        progressBar.setVisibility(View.GONE);
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        // Image loading is successful, hide the progress bar
+                                        progressBar.setVisibility(View.GONE);
+                                        return false;
+                                    }
+                                })
+                                .into(imageView);
+                    }
                 }).addOnFailureListener(e -> {
+                    // Hide the ImageView if image loading fails
                     imageView.setVisibility(View.GONE);
 
                     // Hide the progress bar if image loading fails
@@ -177,5 +189,6 @@ public class ViewJournalEntryFragment extends JournalEntryFragment {
             }
         }
     }
+
 
 }
