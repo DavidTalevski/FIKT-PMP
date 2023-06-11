@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this).load(profilePictureUri).into(profileImageView);
 
         // Add signed-in text
+        if (userName == null || userName.isEmpty()) userName = getString(R.string.guest);
+
         signInTextView.setText(getString(R.string.signed_in_as, userName));
 
     }

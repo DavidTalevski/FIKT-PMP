@@ -54,4 +54,6 @@
     <string name="back">Back</string>
     <string name="user_not_authenticated_message">You must be logged in to view entries.</string>
 
+    <string name="guest">guest</string>
+
 </resources>
